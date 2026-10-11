@@ -1,19 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import * as api from '../api';
 import { useAuth } from '../auth/AuthContext';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
 import { Screen } from '../components/Screen';
-import { pickTarget, StampCard } from '../components/StampCard';
+import { PointsCard, pickTarget } from '../components/PointsCard';
 import { T } from '../components/T';
 import { formatPoints, formatWhen } from '../format';
 import { colors } from '../theme';
 
 export function HomeScreen() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const queryClient = useQueryClient();
 
   const shop = useQuery({ queryKey: ['shop'], queryFn: api.getShop });
@@ -28,7 +28,7 @@ export function HomeScreen() {
     mutationFn: () => api.claimCode(code),
     onSuccess: (res) => {
       setCode('');
-      setNotice({ ok: true, text: `ได้รับ ${res.points} แต้ม รวมเป็น ${formatPoints(res.balance)} แต้ม` });
+      setNotice({ ok: true, text: `ได้ ${res.points} แต้ม รวม ${formatPoints(res.balance)} แต้ม` });
       void queryClient.invalidateQueries({ queryKey: ['me'] });
       void queryClient.invalidateQueries({ queryKey: ['history'] });
     },
@@ -51,51 +51,55 @@ export function HomeScreen() {
     <Screen
       title={shop.data?.name ?? 'สะสมแต้ม'}
       right={
-        <Button label="ออกจากระบบ" variant="line" onPress={() => void logout()} style={styles.small} />
+        <Pressable accessibilityRole="button" onPress={() => void logout()} hitSlop={8}>
+          <T weight="medium" color={colors.accent}>
+            ออกจากระบบ
+          </T>
+        </Pressable>
       }
     >
       <ScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.green} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.accent} />}
       >
-        <StampCard name={user?.name || user?.email || ''} points={points} target={target} />
+        <PointsCard points={points} target={target} />
         {me.isError && (
-          <T color={colors.alert} style={styles.pad}>
+          <T color={colors.danger} style={styles.pad}>
             {api.errorMessage(me.error)}
           </T>
         )}
 
         <View style={styles.pad}>
           <T weight="semibold" size={17}>
-            รับแต้มจากบิลล่าสุด
+            กรอกโค้ดรับแต้ม
           </T>
-          <T size={14} color={colors.muted}>
+          <T size={14} color={colors.subtle}>
             {perPoint
-              ? `ทุก ${perPoint} บาทได้ 1 แต้ม หลังชำระเงิน ขอโค้ดจากพนักงานแล้วกรอกที่นี่`
-              : 'หลังชำระเงิน ขอโค้ดจากพนักงานแล้วกรอกที่นี่'}
+              ? `ทุก ${perPoint} บาทได้ 1 แต้ม ขอโค้ดจากพนักงานหลังจ่ายเงิน`
+              : 'ขอโค้ดจากพนักงานหลังจ่ายเงิน'}
           </T>
           <Field
-            label="โค้ดจากพนักงาน"
+            label="โค้ด"
             value={code}
             onChangeText={(v) => {
               setCode(v.toUpperCase());
               setNotice(null);
             }}
-            mono
+            code
             autoCapitalize="characters"
             autoCorrect={false}
             maxLength={12}
             placeholder="K7P2QM"
           />
           {notice && (
-            <T size={14} weight="medium" color={notice.ok ? colors.ok : colors.alert} accessibilityLiveRegion="polite">
+            <T size={14} weight="medium" color={notice.ok ? colors.ok : colors.danger} accessibilityLiveRegion="polite">
               {notice.text}
             </T>
           )}
           <Button
             label="รับแต้ม"
-            variant="lime"
+            variant="solid"
             onPress={() => claim.mutate()}
             loading={claim.isPending}
             disabled={code.trim().length < 4}
@@ -107,17 +111,17 @@ export function HomeScreen() {
             ประวัติแต้ม
           </T>
           {history.data && history.data.length === 0 && (
-            <T color={colors.muted}>ยังไม่มีรายการ เริ่มสะสมแต้มจากบิลแรกได้เลย</T>
+            <T color={colors.subtle}>ยังไม่มีรายการ</T>
           )}
           {history.data?.map((e) => (
             <View key={e.id} style={styles.row}>
               <View style={styles.flex}>
                 <T weight="medium">{e.note || (e.reason === 'earn' ? 'ได้รับแต้ม' : 'แลกของรางวัล')}</T>
-                <T size={13} color={colors.muted}>
+                <T size={13} color={colors.subtle}>
                   {formatWhen(e.created_at)}
                 </T>
               </View>
-              <T weight="bold" size={18} color={e.delta > 0 ? colors.ok : colors.ink}>
+              <T weight="bold" size={18} color={e.delta > 0 ? colors.ok : colors.text}>
                 {e.delta > 0 ? '+' : '−'}
                 {formatPoints(Math.abs(e.delta))}
               </T>
@@ -133,13 +137,12 @@ const styles = StyleSheet.create({
   content: { paddingBottom: 32, gap: 28 },
   pad: { paddingHorizontal: 20, gap: 10 },
   flex: { flex: 1 },
-  small: { minHeight: 36, paddingHorizontal: 12 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: colors.rule,
+    borderBottomColor: colors.line,
     gap: 12,
   },
 });

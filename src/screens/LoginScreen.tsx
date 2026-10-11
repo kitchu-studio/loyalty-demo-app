@@ -40,17 +40,11 @@ export function LoginScreen() {
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.strip}>
-            {Array.from({ length: 5 }, (_, i) => (
-              <View key={i} style={[styles.dot, i < 3 && styles.dotOn]} />
-            ))}
-          </View>
-
-          <T weight="bold" size={30}>
-            สะสมแต้ม{'\n'}แลกของรางวัล
+          <T weight="bold" size={28}>
+            {isRegister ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'}
           </T>
-          <T color={colors.muted} style={styles.lead}>
-            {isRegister ? 'สมัครสมาชิกเพื่อเริ่มสะสมแต้มกับร้านของเรา' : 'เข้าสู่ระบบเพื่อดูแต้มและแลกของรางวัล'}
+          <T color={colors.subtle} style={styles.lead}>
+            {isRegister ? 'สมัครเพื่อสะสมแต้มกับร้าน' : 'ดูแต้มและแลกของรางวัล'}
           </T>
 
           <View style={styles.form}>
@@ -73,7 +67,7 @@ export function LoginScreen() {
               autoCapitalize="none"
             />
             {error && (
-              <T size={14} color={colors.alert} accessibilityLiveRegion="polite">
+              <T size={14} color={colors.danger} accessibilityLiveRegion="polite">
                 {error}
               </T>
             )}
@@ -93,7 +87,7 @@ export function LoginScreen() {
             }}
             style={styles.switch}
           >
-            <T weight="medium" color={colors.green}>
+            <T weight="medium" color={colors.accent}>
               {isRegister ? 'มีบัญชีแล้ว เข้าสู่ระบบ' : 'ยังไม่มีบัญชี สมัครสมาชิก'}
             </T>
           </Pressable>
@@ -104,19 +98,9 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.paper },
+  safe: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
-  content: { padding: 24, paddingTop: 40, flexGrow: 1 },
-  strip: { flexDirection: 'row', gap: 8, marginBottom: 28 },
-  dot: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    borderWidth: 1.5,
-    borderColor: colors.rule,
-    backgroundColor: colors.white,
-  },
-  dotOn: { backgroundColor: colors.lime, borderColor: colors.lime },
+  content: { padding: 24, paddingTop: 56, flexGrow: 1 },
   lead: { marginTop: 8 },
   form: { marginTop: 28, gap: 16 },
   switch: {

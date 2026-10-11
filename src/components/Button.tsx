@@ -6,7 +6,7 @@ import { T } from './T';
 interface Props {
   label: string;
   onPress: () => void;
-  variant?: 'solid' | 'line' | 'lime';
+  variant?: 'solid' | 'line';
   disabled?: boolean;
   loading?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -14,7 +14,7 @@ interface Props {
 
 export function Button({ label, onPress, variant = 'solid', disabled, loading, style }: Props) {
   const inactive = disabled || loading;
-  const textColor = variant === 'solid' ? colors.white : colors.ink;
+  const textColor = variant === 'solid' ? colors.white : colors.accent;
   return (
     <Pressable
       accessibilityRole="button"
@@ -23,9 +23,7 @@ export function Button({ label, onPress, variant = 'solid', disabled, loading, s
       disabled={inactive}
       style={({ pressed }) => [
         styles.base,
-        variant === 'solid' && styles.solid,
-        variant === 'line' && styles.line,
-        variant === 'lime' && styles.lime,
+        variant === 'solid' ? styles.solid : styles.line,
         inactive && styles.inactive,
         pressed && styles.pressed,
         style,
@@ -50,9 +48,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  solid: { backgroundColor: colors.ink },
-  line: { borderWidth: 1.5, borderColor: colors.ink },
-  lime: { backgroundColor: colors.lime },
+  solid: { backgroundColor: colors.accent },
+  line: { borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface },
   inactive: { opacity: 0.4 },
-  pressed: { opacity: 0.8 },
+  pressed: { opacity: 0.85 },
 });

@@ -15,7 +15,7 @@ export function Screen({ title, right, children }: Props) {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
-        <T weight="bold" size={22}>
+        <T weight="bold" size={24}>
           {title}
         </T>
         {right}
@@ -26,7 +26,7 @@ export function Screen({ title, right, children }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.paper },
+  safe: { flex: 1, backgroundColor: colors.bg },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

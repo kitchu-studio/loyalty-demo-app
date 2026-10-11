@@ -5,9 +5,9 @@ import * as api from '../api';
 import { Button } from '../components/Button';
 import { Screen } from '../components/Screen';
 import { T } from '../components/T';
-import { Ticket } from '../components/Ticket';
+import { VoucherCard } from '../components/VoucherCard';
 import { formatPoints } from '../format';
-import { colors } from '../theme';
+import { colors, radius } from '../theme';
 
 export function RewardsScreen() {
   const queryClient = useQueryClient();
@@ -21,7 +21,7 @@ export function RewardsScreen() {
       void queryClient.invalidateQueries({ queryKey: ['me'] });
       void queryClient.invalidateQueries({ queryKey: ['history'] });
       void queryClient.invalidateQueries({ queryKey: ['redemptions'] });
-      Alert.alert('แลกสำเร็จ', `โค้ดคูปองของคุณคือ ${res.redemption.code}\nแสดงให้พนักงานที่เคาน์เตอร์`);
+      Alert.alert('แลกสำเร็จ', `โค้ดของคุณคือ ${res.redemption.code}\nแสดงกับพนักงานตอนรับของ`);
     },
     onError: (e) => Alert.alert('แลกไม่สำเร็จ', api.errorMessage(e)),
   });
@@ -32,9 +32,9 @@ export function RewardsScreen() {
   const refreshing = me.isRefetching || rewards.isRefetching || vouchers.isRefetching;
 
   function confirm(r: api.Reward) {
-    Alert.alert(`แลก “${r.name}”`, `ใช้ ${formatPoints(r.cost_points)} แต้ม จะเหลือ ${formatPoints(points - r.cost_points)} แต้ม`, [
+    Alert.alert(`แลก ${r.name}`, `ใช้ ${formatPoints(r.cost_points)} แต้ม เหลือ ${formatPoints(points - r.cost_points)} แต้ม`, [
       { text: 'ยกเลิก', style: 'cancel' },
-      { text: 'แลกเลย', onPress: () => redeem.mutate(r.id) },
+      { text: 'แลก', onPress: () => redeem.mutate(r.id) },
     ]);
   }
 
@@ -42,7 +42,7 @@ export function RewardsScreen() {
     <Screen
       title="ของรางวัล"
       right={
-        <T weight="semibold" color={colors.green}>
+        <T weight="semibold">
           {formatPoints(points)} แต้ม
         </T>
       }
@@ -57,7 +57,7 @@ export function RewardsScreen() {
               void rewards.refetch();
               void vouchers.refetch();
             }}
-            tintColor={colors.green}
+            tintColor={colors.accent}
           />
         }
       >
@@ -67,16 +67,16 @@ export function RewardsScreen() {
               คูปองของฉัน
             </T>
             {active.map((v) => (
-              <Ticket key={v.id} voucher={v} />
+              <VoucherCard key={v.id} voucher={v} />
             ))}
           </View>
         )}
 
         <View style={styles.section}>
           <T weight="semibold" size={17}>
-            แลกด้วยแต้ม
+            ของรางวัล
           </T>
-          {rewards.isError && <T color={colors.alert}>{api.errorMessage(rewards.error)}</T>}
+          {rewards.isError && <T color={colors.danger}>{api.errorMessage(rewards.error)}</T>}
           {rewards.data?.map((r) => {
             const missing = r.cost_points - points;
             return (
@@ -86,22 +86,22 @@ export function RewardsScreen() {
                     {r.name}
                   </T>
                   {r.description !== '' && (
-                    <T size={13} color={colors.muted}>
+                    <T size={13} color={colors.subtle}>
                       {r.description}
                     </T>
                   )}
-                  <T weight="bold" size={15} color={colors.green} style={styles.cost}>
+                  <T weight="bold" size={15} color={colors.accent} style={styles.cost}>
                     {formatPoints(r.cost_points)} แต้ม
                   </T>
                 </View>
                 {missing > 0 ? (
-                  <T size={13} color={colors.muted} style={styles.missing}>
+                  <T size={13} color={colors.subtle} style={styles.missing}>
                     ขาดอีก {formatPoints(missing)}
                   </T>
                 ) : (
                   <Button
                     label="แลก"
-                    variant="lime"
+                    variant="solid"
                     onPress={() => confirm(r)}
                     disabled={redeem.isPending}
                     style={styles.redeem}
@@ -118,7 +118,7 @@ export function RewardsScreen() {
               ใช้แล้ว
             </T>
             {used.map((v) => (
-              <Ticket key={v.id} voucher={v} />
+              <VoucherCard key={v.id} voucher={v} />
             ))}
           </View>
         )}
@@ -135,9 +135,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.rule,
+    padding: 14,
+    backgroundColor: colors.surface,
+    borderRadius: radius.card,
   },
   cost: { marginTop: 4 },
   redeem: { minHeight: 40, paddingHorizontal: 22 },

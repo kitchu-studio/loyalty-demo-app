@@ -83,7 +83,7 @@ export function StaffScreen() {
             <RefreshControl
               refreshing={summary.isRefetching}
               onRefresh={() => void summary.refetch()}
-              tintColor={colors.green}
+              tintColor={colors.accent}
             />
           }
         >
@@ -95,10 +95,10 @@ export function StaffScreen() {
 
           <View style={styles.section}>
             <T weight="semibold" size={17}>
-              ออกโค้ดแต้มให้ลูกค้า
+              ออกโค้ดแต้ม
             </T>
-            <T size={14} color={colors.muted}>
-              พิมพ์ยอดบิลที่ลูกค้าจ่ายแล้ว ระบบจะออกโค้ดให้ลูกค้ากรอกในแอป
+            <T size={14} color={colors.subtle}>
+              ใส่ยอดบิลที่ลูกค้าจ่ายแล้ว ระบบสร้างโค้ดให้ลูกค้ากรอกในแอป
             </T>
             <Field
               label="ยอดบิล (บาท)"
@@ -108,7 +108,7 @@ export function StaffScreen() {
               maxLength={6}
               placeholder="250"
             />
-            {issueError && <T color={colors.alert}>{issueError}</T>}
+            {issueError && <T color={colors.danger}>{issueError}</T>}
             <Button
               label="ออกโค้ด"
               onPress={() => issue.mutate()}
@@ -117,13 +117,13 @@ export function StaffScreen() {
             />
             {issued && (
               <View style={styles.result}>
-                <T size={13} color="rgba(255,255,255,0.7)">
+                <T size={13} color={colors.subtle}>
                   ให้ลูกค้ากรอกโค้ดนี้ ได้ {issued.points} แต้ม
                 </T>
-                <T mono size={38} color={colors.lime} style={styles.code}>
+                <T weight="bold" size={34} style={styles.code}>
                   {issued.code}
                 </T>
-                <T size={13} color="rgba(255,255,255,0.7)">
+                <T size={13} color={colors.subtle}>
                   ใช้ได้ครั้งเดียว หมดอายุ {formatWhen(issued.expires_at)}
                 </T>
               </View>
@@ -132,17 +132,17 @@ export function StaffScreen() {
 
           <View style={styles.section}>
             <T weight="semibold" size={17}>
-              ตรวจและส่งมอบคูปอง
+              ตรวจคูปอง
             </T>
             <Field
-              label="โค้ดคูปองของลูกค้า"
+              label="โค้ดคูปอง"
               value={voucherCode}
               onChangeText={(v) => {
                 setVoucherCode(v.toUpperCase());
                 setVoucher(null);
                 setVoucherNote(null);
               }}
-              mono
+              code
               autoCapitalize="characters"
               autoCorrect={false}
               maxLength={12}
@@ -160,24 +160,24 @@ export function StaffScreen() {
                 <T weight="semibold" size={17}>
                   {voucher.reward_name}
                 </T>
-                <T color={colors.muted}>ของ {voucher.customer_name || 'สมาชิก'}</T>
+                <T color={colors.subtle}>ของ {voucher.customer_name || 'สมาชิก'}</T>
                 {voucher.status === 'active' ? (
                   <Button
                     label="ส่งมอบแล้ว"
-                    variant="lime"
+                    variant="solid"
                     onPress={() => handOver.mutate(voucher.code)}
                     loading={handOver.isPending}
                     style={styles.gap}
                   />
                 ) : (
-                  <T weight="medium" color={colors.alert}>
+                  <T weight="medium" color={colors.danger}>
                     ใช้แล้ว{voucher.used_at ? ` เมื่อ ${formatWhen(voucher.used_at)}` : ''}
                   </T>
                 )}
               </View>
             )}
             {voucherNote && (
-              <T weight="medium" color={voucherNote.ok ? colors.ok : colors.alert}>
+              <T weight="medium" color={voucherNote.ok ? colors.ok : colors.danger}>
                 {voucherNote.text}
               </T>
             )}
@@ -185,10 +185,10 @@ export function StaffScreen() {
 
           <View style={styles.section}>
             <T weight="semibold" size={17}>
-              ข้อมูลร้านสำหรับผู้ช่วย AI
+              ข้อมูลร้านสำหรับ AI
             </T>
-            <T size={14} color={colors.muted}>
-              เวลาเปิด-ปิด ที่อยู่ เมนูแนะนำ โปรโมชัน ผู้ช่วยจะตอบลูกค้าจากข้อความนี้เท่านั้น
+            <T size={14} color={colors.subtle}>
+              AI ตอบลูกค้าจากข้อความนี้เท่านั้น ใส่เวลาเปิดปิด ที่อยู่ เมนู โปรโมชัน
             </T>
             <Field
               label="ข้อมูลร้าน"
@@ -200,7 +200,7 @@ export function StaffScreen() {
               multiline
               maxLength={2000}
             />
-            {saveAbout.isError && <T color={colors.alert}>{api.errorMessage(saveAbout.error)}</T>}
+            {saveAbout.isError && <T color={colors.danger}>{api.errorMessage(saveAbout.error)}</T>}
             {aboutSaved && <T color={colors.ok} weight="medium">บันทึกแล้ว</T>}
             <Button
               label="บันทึกข้อมูลร้าน"
@@ -221,7 +221,7 @@ function Stat({ label, value, last }: { label: string; value: string; last?: boo
       <T weight="bold" size={26}>
         {value}
       </T>
-      <T size={13} color={colors.muted}>
+      <T size={13} color={colors.subtle}>
         {label}
       </T>
     </View>
@@ -238,16 +238,16 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   stat: { flex: 1, alignItems: 'center' },
-  statRule: { borderRightWidth: 1, borderRightColor: colors.rule },
+  statRule: { borderRightWidth: 1, borderRightColor: colors.line },
   section: { gap: 10 },
   result: {
-    backgroundColor: colors.green,
+    backgroundColor: colors.surface,
     borderRadius: radius.card,
     padding: 18,
     alignItems: 'center',
     gap: 2,
   },
-  code: { letterSpacing: 8, marginVertical: 4 },
+  code: { letterSpacing: 6, marginVertical: 4 },
   found: {
     backgroundColor: colors.white,
     borderRadius: radius.card,

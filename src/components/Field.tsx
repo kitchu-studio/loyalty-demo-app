@@ -1,29 +1,24 @@
 import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 
-import { colors, fonts, radius } from '../theme';
+import { colors, radius } from '../theme';
 import { T } from './T';
 
 interface Props extends TextInputProps {
   label: string;
-  mono?: boolean;
+  /** For short codes: bigger, centred, letter-spaced. */
+  code?: boolean;
 }
 
-export function Field({ label, mono, style, ...rest }: Props) {
+export function Field({ label, code, style, ...rest }: Props) {
   return (
     <View style={styles.wrap}>
-      <T weight="medium" size={14} color={colors.muted}>
+      <T weight="medium" size={14} color={colors.subtle}>
         {label}
       </T>
       <TextInput
         {...rest}
-        placeholderTextColor={colors.rule}
-        style={[
-          styles.input,
-          { fontFamily: mono ? fonts.mono : fonts.regular },
-          mono && styles.mono,
-          rest.multiline && styles.multiline,
-          style,
-        ]}
+        placeholderTextColor="#A8A8B0"
+        style={[styles.input, code && styles.code, rest.multiline && styles.multiline, style]}
       />
     </View>
   );
@@ -33,15 +28,15 @@ const styles = StyleSheet.create({
   wrap: { gap: 6 },
   input: {
     minHeight: 48,
-    borderWidth: 1.5,
-    borderColor: colors.ink,
+    borderWidth: 1,
+    borderColor: colors.line,
     borderRadius: radius.control,
-    backgroundColor: colors.white,
+    backgroundColor: colors.surface,
     paddingHorizontal: 14,
     paddingVertical: 10,
     fontSize: 16,
-    color: colors.ink,
+    color: colors.text,
   },
-  mono: { fontSize: 22, letterSpacing: 4, textAlign: 'center' },
+  code: { fontSize: 20, fontWeight: '600', letterSpacing: 3, textAlign: 'center' },
   multiline: { minHeight: 150, textAlignVertical: 'top', lineHeight: 24 },
 });

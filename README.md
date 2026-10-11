@@ -17,7 +17,7 @@
 
 ## เทคโนโลยี
 
-Expo (React Native) · TypeScript แบบ strict · React Navigation (bottom tabs) · TanStack Query · Axios · expo-secure-store (เก็บ token) · ฟอนต์ IBM Plex Sans Thai
+Expo (React Native) · TypeScript แบบ strict · React Navigation (bottom tabs) · TanStack Query · Axios · expo-secure-store (เก็บ token)
 
 ## จุดที่ตั้งใจทำ
 

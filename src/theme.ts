@@ -1,22 +1,13 @@
 export const colors = {
-  paper: '#EDF0EC',
-  ink: '#10261F',
-  green: '#0E4B3A',
-  greenDeep: '#0A3A2D',
-  lime: '#D4F24A',
-  muted: '#5E7168',
-  rule: '#C5D0C8',
+  bg: '#F4F4F6',
+  surface: '#FFFFFF',
+  text: '#1B1B1F',
+  subtle: '#6C6C75',
+  line: '#E1E1E6',
+  accent: '#2459C9',
   white: '#FFFFFF',
-  alert: '#D9482B',
-  ok: '#1F7A4D',
+  danger: '#C8372D',
+  ok: '#17803F',
 } as const;
 
-export const fonts = {
-  regular: 'IBMPlexSansThai_400Regular',
-  medium: 'IBMPlexSansThai_500Medium',
-  semibold: 'IBMPlexSansThai_600SemiBold',
-  bold: 'IBMPlexSansThai_700Bold',
-  mono: 'IBMPlexMono_600SemiBold',
-} as const;
-
-export const radius = { card: 18, control: 10 } as const;
+export const radius = { card: 14, control: 10 } as const;

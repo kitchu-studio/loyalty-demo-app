@@ -1,18 +1,8 @@
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import {
-  IBMPlexMono_600SemiBold,
-} from '@expo-google-fonts/ibm-plex-mono';
-import {
-  IBMPlexSansThai_400Regular,
-  IBMPlexSansThai_500Medium,
-  IBMPlexSansThai_600SemiBold,
-  IBMPlexSansThai_700Bold,
-} from '@expo-google-fonts/ibm-plex-sans-thai';
 
 import { AuthProvider, useAuth } from './src/auth/AuthContext';
 import { Tabs } from './src/navigation/Tabs';
@@ -27,18 +17,18 @@ const navTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: colors.paper,
-    card: colors.paper,
-    text: colors.ink,
-    border: colors.rule,
-    primary: colors.ink,
+    background: colors.bg,
+    card: colors.surface,
+    text: colors.text,
+    border: colors.line,
+    primary: colors.accent,
   },
 };
 
 function Splash() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.paper }}>
-      <ActivityIndicator color={colors.green} />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg }}>
+      <ActivityIndicator color={colors.accent} />
     </View>
   );
 }
@@ -55,25 +45,13 @@ function Root() {
 }
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    IBMPlexSansThai_400Regular,
-    IBMPlexSansThai_500Medium,
-    IBMPlexSansThai_600SemiBold,
-    IBMPlexSansThai_700Bold,
-    IBMPlexMono_600SemiBold,
-  });
-
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
       <QueryClientProvider client={queryClient}>
-        {fontsLoaded ? (
-          <AuthProvider>
-            <Root />
-          </AuthProvider>
-        ) : (
-          <Splash />
-        )}
+        <AuthProvider>
+          <Root />
+        </AuthProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );

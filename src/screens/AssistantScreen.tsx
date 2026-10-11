@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, TextInput, Vie
 import * as api from '../api';
 import { Screen } from '../components/Screen';
 import { T } from '../components/T';
-import { colors, fonts, radius } from '../theme';
+import { colors, radius } from '../theme';
 
 interface Msg {
   id: number;
@@ -29,7 +29,7 @@ export function AssistantScreen() {
       id: 1,
       role: 'assistant',
       local: true,
-      content: 'สวัสดีค่ะ ถามเรื่องเมนู เวลาเปิด-ปิด โปรโมชัน หรือแต้มของคุณได้เลยนะคะ',
+      content: 'ถามเรื่องเมนู เวลาเปิดปิด โปรโมชัน หรือแต้มของคุณได้ค่ะ',
     },
   ]);
 
@@ -64,8 +64,8 @@ export function AssistantScreen() {
           keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => scroller.current?.scrollToEnd({ animated: true })}
         >
-          <T size={13} color={colors.muted}>
-            ผู้ช่วยของ {shop.data?.name ?? 'ร้าน'} ตอบจากข้อมูลที่ร้านตั้งไว้ ถ้าไม่แน่ใจจะให้ถามพนักงาน
+          <T size={13} color={colors.subtle}>
+            ตอบจากข้อมูลที่ {shop.data?.name ?? 'ร้าน'} ตั้งไว้ ถ้าไม่แน่ใจให้ถามพนักงาน
           </T>
 
           {messages.map((m) =>
@@ -81,7 +81,7 @@ export function AssistantScreen() {
           )}
           {ask.isPending && (
             <View style={styles.theirs}>
-              <T color={colors.muted}>กำลังพิมพ์…</T>
+              <T color={colors.subtle}>กำลังพิมพ์…</T>
             </View>
           )}
 
@@ -89,7 +89,7 @@ export function AssistantScreen() {
             <View style={styles.chips}>
               {SUGGESTIONS.map((s) => (
                 <Pressable key={s} accessibilityRole="button" onPress={() => send(s)} style={styles.chip}>
-                  <T size={14} weight="medium" color={colors.green}>
+                  <T size={14}>
                     {s}
                   </T>
                 </Pressable>
@@ -97,7 +97,7 @@ export function AssistantScreen() {
             </View>
           )}
           {demo && (
-            <T size={12} color={colors.muted}>
+            <T size={12} color={colors.subtle}>
               โหมดตัวอย่าง: ตอบจากกฎง่าย ๆ ยังไม่ได้เชื่อมต่อ AI จริง
             </T>
           )}
@@ -108,7 +108,7 @@ export function AssistantScreen() {
             value={text}
             onChangeText={setText}
             placeholder="พิมพ์คำถาม"
-            placeholderTextColor={colors.muted}
+            placeholderTextColor={colors.subtle}
             style={styles.input}
             multiline
             maxLength={500}
@@ -121,7 +121,7 @@ export function AssistantScreen() {
             disabled={!text.trim() || ask.isPending}
             style={[styles.send, (!text.trim() || ask.isPending) && styles.sendOff]}
           >
-            <Ionicons name="arrow-up" size={22} color={colors.ink} />
+            <Ionicons name="arrow-up" size={22} color={colors.white} />
           </Pressable>
         </View>
       </KeyboardAvoidingView>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   mine: {
     alignSelf: 'flex-end',
     maxWidth: '82%',
-    backgroundColor: colors.green,
+    backgroundColor: colors.accent,
     borderRadius: radius.card,
     borderBottomRightRadius: 4,
     paddingHorizontal: 14,
@@ -147,17 +147,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: radius.card,
     borderBottomLeftRadius: 4,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.lime,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
   chips: { gap: 8, alignItems: 'flex-start', marginTop: 4 },
   chip: {
-    borderWidth: 1.5,
-    borderColor: colors.green,
-    borderRadius: radius.control,
-    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    paddingHorizontal: 14,
     paddingVertical: 6,
   },
   bar: {
@@ -167,27 +166,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: colors.rule,
+    borderTopColor: colors.line,
+    backgroundColor: colors.surface,
   },
   input: {
     flex: 1,
     maxHeight: 110,
     minHeight: 44,
-    borderWidth: 1.5,
-    borderColor: colors.ink,
-    borderRadius: radius.control,
-    backgroundColor: colors.white,
-    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 22,
+    backgroundColor: colors.surface,
+    paddingHorizontal: 16,
     paddingVertical: 8,
-    fontFamily: fonts.regular,
     fontSize: 16,
-    color: colors.ink,
+    color: colors.text,
   },
   send: {
     width: 44,
     height: 44,
-    borderRadius: radius.control,
-    backgroundColor: colors.lime,
+    borderRadius: 22,
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },

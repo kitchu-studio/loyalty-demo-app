@@ -6,7 +6,7 @@ import { AssistantScreen } from '../screens/AssistantScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { RewardsScreen } from '../screens/RewardsScreen';
 import { StaffScreen } from '../screens/StaffScreen';
-import { colors, fonts } from '../theme';
+import { colors } from '../theme';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -22,13 +22,13 @@ export function Tabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.ink,
-        tabBarInactiveTintColor: colors.muted,
-        tabBarLabelStyle: { fontFamily: fonts.medium, fontSize: 12 },
-        tabBarStyle: { backgroundColor: colors.paper, borderTopColor: colors.rule },
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.subtle,
+        tabBarLabelStyle: { fontSize: 12 },
+        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
       }}
     >
-      <Tab.Screen name="การ์ดแต้ม" component={HomeScreen} options={{ tabBarIcon: icon('card-outline') }} />
+      <Tab.Screen name="แต้ม" component={HomeScreen} options={{ tabBarIcon: icon('home-outline') }} />
       <Tab.Screen name="ของรางวัล" component={RewardsScreen} options={{ tabBarIcon: icon('gift-outline') }} />
       <Tab.Screen
         name="ถามร้าน"

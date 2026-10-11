@@ -1,22 +1,28 @@
-import { Text, TextProps } from 'react-native';
+import { Text, TextProps, TextStyle } from 'react-native';
 
-import { colors, fonts } from '../theme';
+import { colors } from '../theme';
 
 interface Props extends TextProps {
   weight?: 'regular' | 'medium' | 'semibold' | 'bold';
   size?: number;
   color?: string;
-  mono?: boolean;
 }
 
-/** Text with the app font. React Native needs one font family per weight, so weight picks the family. */
-export function T({ weight = 'regular', size = 15, color = colors.ink, mono, style, ...rest }: Props) {
+const WEIGHTS: Record<NonNullable<Props['weight']>, TextStyle['fontWeight']> = {
+  regular: '400',
+  medium: '500',
+  semibold: '600',
+  bold: '700',
+};
+
+/** Text in the system font, so Thai renders with the platform's own typeface. */
+export function T({ weight = 'regular', size = 15, color = colors.text, style, ...rest }: Props) {
   return (
     <Text
       {...rest}
       style={[
         {
-          fontFamily: mono ? fonts.mono : fonts[weight],
+          fontWeight: WEIGHTS[weight],
           fontSize: size,
           color,
           // Thai vowels and tone marks stack above and below the line and get clipped without room.
