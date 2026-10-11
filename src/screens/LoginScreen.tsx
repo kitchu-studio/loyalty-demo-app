@@ -1,0 +1,129 @@
+import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { errorMessage } from '../api';
+import { useAuth } from '../auth/AuthContext';
+import { Button } from '../components/Button';
+import { Field } from '../components/Field';
+import { T } from '../components/T';
+import { colors, radius } from '../theme';
+
+export function LoginScreen() {
+  const { login, register } = useAuth();
+  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const isRegister = mode === 'register';
+  const canSubmit = email.trim() !== '' && password.length >= (isRegister ? 8 : 1) && !busy;
+
+  async function submit() {
+    setBusy(true);
+    setError(null);
+    try {
+      if (isRegister) {
+        await register(name, email, password);
+      } else {
+        await login(email, password);
+      }
+    } catch (e) {
+      setError(errorMessage(e));
+      setBusy(false);
+    }
+  }
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={styles.strip}>
+            {Array.from({ length: 5 }, (_, i) => (
+              <View key={i} style={[styles.dot, i < 3 && styles.dotOn]} />
+            ))}
+          </View>
+
+          <T weight="bold" size={30}>
+            สะสมแต้ม{'\n'}แลกของรางวัล
+          </T>
+          <T color={colors.muted} style={styles.lead}>
+            {isRegister ? 'สมัครสมาชิกเพื่อเริ่มสะสมแต้มกับร้านของเรา' : 'เข้าสู่ระบบเพื่อดูแต้มและแลกของรางวัล'}
+          </T>
+
+          <View style={styles.form}>
+            {isRegister && (
+              <Field label="ชื่อ" value={name} onChangeText={setName} autoCapitalize="words" maxLength={100} />
+            )}
+            <Field
+              label="อีเมล"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+            />
+            <Field
+              label={isRegister ? 'รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)' : 'รหัสผ่าน'}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+            {error && (
+              <T size={14} color={colors.alert} accessibilityLiveRegion="polite">
+                {error}
+              </T>
+            )}
+            <Button
+              label={isRegister ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'}
+              onPress={submit}
+              loading={busy}
+              disabled={!canSubmit}
+            />
+          </View>
+
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              setMode(isRegister ? 'login' : 'register');
+              setError(null);
+            }}
+            style={styles.switch}
+          >
+            <T weight="medium" color={colors.green}>
+              {isRegister ? 'มีบัญชีแล้ว เข้าสู่ระบบ' : 'ยังไม่มีบัญชี สมัครสมาชิก'}
+            </T>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.paper },
+  flex: { flex: 1 },
+  content: { padding: 24, paddingTop: 40, flexGrow: 1 },
+  strip: { flexDirection: 'row', gap: 8, marginBottom: 28 },
+  dot: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1.5,
+    borderColor: colors.rule,
+    backgroundColor: colors.white,
+  },
+  dotOn: { backgroundColor: colors.lime, borderColor: colors.lime },
+  lead: { marginTop: 8 },
+  form: { marginTop: 28, gap: 16 },
+  switch: {
+    marginTop: 20,
+    alignSelf: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: radius.control,
+  },
+});
